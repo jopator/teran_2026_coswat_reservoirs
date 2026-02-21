@@ -1,4 +1,7 @@
-
+# General instructions to run scripts
+- Please make sure to define references to other files correctly. Most scripts use the os.chdir() function to establish a working directory - All path definitions must be relative to this.
+- Some scripts require arguments to be run individually. This is mentioned at the beginning of each script.
+- A yaml file is provided to create a python environment suitable to run the scripts in case it is needed.
 
 # Data availability.
 
@@ -9,11 +12,6 @@ To be able run simulations and execute processing/analysis scripts, the model fi
 - Processed outputs are provided in the coswat_outputs.zip - These are processed outputs for selected waterbodies as part of the model evaluation section.
 
 - Observations for reservoir storage, inflow and outflow are provided in the observations.zip. Observations for streamflow are provided in the "CoSWAT-Framework/model-data"
-
-# General instructions to run scripts
-- Please make sure to define references to other files correctly. Most scripts use the os.chdir() function to establish a working directory - All path definitions must be relative to this.
-- Some scripts require arguments to be run individually. This is mentioned at the beginning of each script.
-- A yaml file is provided to create a python environment suitable to run the scripts in case it is needed.
 
 # PART 1: Running CoSWAT Simulations
 
