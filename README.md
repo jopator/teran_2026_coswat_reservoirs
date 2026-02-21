@@ -15,7 +15,9 @@ This study enhances the CoSWAT Global Water Model by improving the representatio
 
 To be able run simulations and execute processing/analysis scripts, the model files for this study are needed. They can be obtained in the following repository: https://doi.org/10.5281/zenodo.18633376 (Teran, 2026). Here, you can also find already processed outputs if you only wish to execute the analysis scripts without needing to run the model.
 
-- The model files are provided in the "CoSWAT-Framework/model-setup" directory. They are available for CoSWAT version 1.5.0 (With lakes and reservoirs) and version 1.1.0(without lakes and reservoirs).
+- The model input files are provided in the CoSWAT-Framework/model-data.zip file. This can be used, in combination with the CoSWAT-Framework workflow, to set up the model files.
+- 
+- As an example, the america-bravo region model setup files are provided in the CoSWAT-Framework/model-setup.zip file.
 
 - Processed outputs are provided in the coswat_outputs.zip - These are processed outputs for selected waterbodies as part of the model evaluation section.
 
