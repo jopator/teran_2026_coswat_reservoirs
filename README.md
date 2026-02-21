@@ -1,7 +1,7 @@
 # Description
 This repository contains the scripts used for the study: Integrating reservoirs and lakes in the CoSWAT global hydrological model.\
 This study also used the CoSWAT-Framework, which can be accessed at: https://github.com/jopator/CoSWAT-Framework
-And the Soil and Water Assessment Tool (SWAT+), which can be accessed at: https://github.com/swat-model/swatplus
+And the Soil and Water Assessment Tool (SWAT+), which can be accessed at: https://github.com/jopator/swatplus
 
 This study enhances the CoSWAT Global Water Model by improving the representation of reservoirs and lakes at large scale. We implemented operational schemes for storage and release, and developed a topology-based approach to estimate irrigation demand for irrigation reservoirs using global datasets. The model was restructured and evaluated across multiple regions and compared the results with other global models.
 
@@ -51,7 +51,7 @@ The `running_sims` folder contains the tools required to configure and execute C
 ### `exes/`
 
 Contains the compiled SWAT+ executable used in this study (swatplus-61.0.2.11-coswatv1.5-ifx-lin_x86_64`). It is a binary to be used in a Linux system.\
-The source code can be obtained at the official SWAT+ repository provided above. The source code already includes additions made in this study, and can be compiled for other operative systems.
+The source code can be obtained at the repository provided above. The source code already includes additions made in this study, and can be compiled for other operative systems.
 
 ---
 
