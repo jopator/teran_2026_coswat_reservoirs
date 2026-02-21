@@ -11,7 +11,7 @@ This study enhances the CoSWAT Global Water Model by improving the representatio
 - Some scripts require arguments to be run individually. This is mentioned at the beginning of each script.
 - A yaml file is provided to create a python environment suitable to run the scripts in case it is needed.
 
-# Data availability.
+# Data availability
 
 To be able run simulations and execute processing/analysis scripts, the model files for this study are needed. They can be obtained in the following repository: https://doi.org/10.5281/zenodo.18633376 (Teran, 2026). Here, you can also find already processed outputs if you only wish to execute the analysis scripts without needing to run the model.
 
@@ -228,7 +228,7 @@ This is a Jupyter Notebook with a summary of the model performance assessment am
 ## `other/`
 Additional scripts for some specific tasks or analyses.
 
-### `resolve_efficiency.ipynb`
+#### `resolve_efficiency.ipynb`
 This is a Jupyter Notebook where the resolve efficiency of lakes and reservoirs into the model network is assessed.
 
 #### `irrigation_demand._nasser.ipynb`
