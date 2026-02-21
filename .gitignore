@@ -6,3 +6,8 @@ observations
 stats
 analysis
 __pycache__
+*.nc
+Scripts/result_analysis/reservoirs_coswat/validation/isimipModels/plots/
+Scripts/result_analysis/reservoirs_coswat/validation/isimipModels/processedData/
+Scripts/result_analysis/reservoirs_coswat/validation/isimipModels/modelOutputs/
+Scripts/result_analysis/reservoirs_coswat/validation/isimipModels/stats/

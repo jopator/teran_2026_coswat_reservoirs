@@ -133,6 +133,11 @@ This can be performed using the scripts and datasets associated with the results
         │   ├── read_swat.py
         │   ├── run_process.py
         │   └── run_process.sh
+        ├── isimipModels
+        │       └── evaluation
+        │           ├── processOutputs.py
+        │           ├── summary_analysis.ipynb
+        │           └── validationISIMIP.py
         ├── others
         │   ├── irrigation_demand._nasser.ipynb
         │   ├── nasser_irrigated_hrus.gpkg
@@ -147,7 +152,7 @@ This can be performed using the scripts and datasets associated with the results
             ├── 05_streamflow_performance_processing.py
             ├── 06_streamflow_performance_analysis.py
             ├── read_swat.py
-            ├── shapefiles
+            └── shapefiles
 ---
 
 ## `data_processing/`
@@ -203,3 +208,28 @@ This script has helper objects and functions to more easily read SWAT+ (hence Co
 
 #### `shapefiles/`
 This folder contains some vector files used for plotting. This includes river basins from HydroBASINS (https://www.hydrosheds.org/products/hydrobasins), major rivers in the world (https://datacatalog.worldbank.org/search/dataset/0042032/major-rivers-of-the-world) and lakes from HydroLAKES (https://www.hydrosheds.org/products/hydrolakes).
+
+---
+## `validation/isimipModels`
+This folder containts a set of script to process outputs from five models from the ISIMIP global sector (https://doi.org/10.48364/ISIMIP.398165.7).\
+Namely: CWATM, H08, LPJmL5-7-10-fire, MIROC-INTEG-LAND, and WaterGAP2-2e.\
+To be able to run this scripts, you need to download these datasets from their repository. Make sure the script paths for this datastes are correctly defined.
+
+#### `processOutputs.py`
+This script performs sampling of the global models at the same locations where the CoSWAT model is validated.
+
+#### `validationISIMIP.py`
+This script performs model evaluation (KGE,PBIAS,R) of the global models at the same locations where the CoSWAT model is validated.
+
+#### `summary_analysis.ipynb`
+This is a Jupyter Notebook with a summary of the model performance assessment among all models and CoSWAT for monthly reservoir storage.
+
+---
+## `other/`
+Additional scripts for some specific tasks or analyses.
+
+### `resolve_efficiency.ipynb`
+This is a Jupyter Notebook where the resolve efficiency of lakes and reservoirs into the model network is assessed.
+
+#### `irrigation_demand._nasser.ipynb`
+This is a Jupyter Notebook where a simple estimation of the irrigation amount applied in the simulations downstream of the Nasser Lake in the Nile River Basin.
