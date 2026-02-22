@@ -19,6 +19,7 @@ import geopandas as gpd
 import pickle as pkl
 import read_swat
 import argparse
+from pathlib import Path
 
 def process_res(filePath:str, res_id_df: pd.DataFrame):
     file_name = filePath.split("/")[-1]
@@ -41,8 +42,10 @@ def process_res(filePath:str, res_id_df: pd.DataFrame):
 
 if __name__ == '__main__':
 
-    os.chdir('/data/brussel/vo/000/bvo00033') # All relative paths will be based on this ! !
-    analysis_folder = f'vsc10883/PHD_main/Projects/CoSWAT/Scripts/result_analysis'
+    BASE_DIR = Path(__file__).resolve().parents[3]  # root of repo
+    os.chdir(BASE_DIR)  # All relative paths will be based on this ! !
+
+    analysis_folder = f'Scripts/result_analysis'
 
     # argument and regions
     parser = argparse.ArgumentParser(description="scripts for running coswatv2")

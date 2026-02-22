@@ -16,9 +16,7 @@ import seaborn as sns
 import matplotlib.ticker as mticker
 import matplotlib.colors as mcolors
 from scipy.stats import pearsonr
-
-os.chdir('/media/jopato/jopato_ssd/PHD/PHD_main/Projects/CoSWAT/Paper_Ch2/codeAndDataAvailability/teran_et_al_2026_coswat_reservoirs')#'/data/brussel/vo/000/bvo00033') # All relative paths will be based on this ! !
-
+from pathlib import Path
 
 # Functions
 def fmt_lat(lat, pos=None):
@@ -87,6 +85,9 @@ def write_stats_summary(log, df, label):
     
 # Paths settigs and file names
 # =======================================================================================================
+BASE_DIR = Path(__file__).resolve().parents[4]  # root of repo
+os.chdir(BASE_DIR)  # All relative paths will be based on this ! !
+
 version         = "1.5.0"
 
 analysis_folder = f'Scripts/result_analysis'#f'vsc10883/PHD_main/Projects/CoSWAT/Scripts/result_analysis'
@@ -171,6 +172,26 @@ df_gral_inf = df_gral_inf.reset_index(drop=True)
 df_gral_outf = pd.concat(df_outf_list)
 df_gral_outf = df_gral_outf.reset_index(drop=True)
 
+
+# Filtering very negative KGE values that cause long tail in distribution
+df_gral_tot = df_gral.dropna(subset=['kge', 'pbias', 'R']).copy()
+df_gral_inf_tot = df_gral_inf.dropna(subset=['kge', 'pbias', 'R']).copy()
+df_gral_outf_tot = df_gral_outf.dropna(subset=['kge', 'pbias', 'R']).copy()
+
+"""
+Reservoir performance is assessed on a subset by filtering out extremely negative performace/error indices.
+
+The cutoff was set to KGE: -5 or PBIAS: 200. As below/above the results are non informative and generate a long tail without
+significantly changing the central part of the distribution.
+
+This filters out about 12 cases.
+The results for the total number before this filtering is included in the outLogStorage.txt file.
+"""
+
+df_gral      = df_gral[(df_gral['kge']>-5) & (df_gral['pbias']>-200) & (df_gral['kge']<200)]
+df_gral_inf  = df_gral_inf[df_gral_inf['kge']>-5]
+df_gral_outf = df_gral_outf[df_gral_outf['kge']>-5]
+
 df_long = df_gral.melt(id_vars="grand_id", value_vars=["kge", "R", "pbias","alpha","beta"], var_name="metric",value_name="value")
 df_long_inf = df_gral_inf.melt(id_vars="grand_id",value_vars=["kge", "R", "pbias","alpha","beta"],var_name="metric",value_name="value")
 df_long_outf = df_gral_outf.melt(id_vars="grand_id",value_vars=["kge", "R", "pbias","alpha","beta"],var_name="metric",value_name="value")
@@ -195,7 +216,7 @@ for i, (label, df_sel) in enumerate(data_sets):
         else:
             sns.histplot(data=df_sel[df_sel["metric"] == stat],x="value",kde=True,stat="percent",color=colors[stat],ax=ax)
             
-            # ax.set_ylim(0,25)
+            ax.set_ylim(0,25)
 
         if stat == 'kge':
             if label == 'Storage':
@@ -208,7 +229,7 @@ for i, (label, df_sel) in enumerate(data_sets):
             ax.axvline(0.3, color="k", linestyle="dashdot", linewidth=1,label="Good")
 
         if stat == 'R':
-            # ax.set_xlim(-0.75,1)
+            ax.set_xlim(-0.75,1)
             ax.axvline(0.0, color="k", linestyle="--", linewidth=2,label="Satisfactory")
             ax.axvline(0.4, color="k", linestyle="dashdot", linewidth=1,label="Good")
             ax.set_xlabel("r")
@@ -249,6 +270,12 @@ with open(logOut, "w") as log:
     write_stats_summary(log, df_gral,      "storage")
     write_stats_summary(log, df_gral_inf,  "inflow")
     write_stats_summary(log, df_gral_outf, "outflow")
+    log.write('\n-------------------------------------------\n')
+    log.write("before filtering extreme negatives")
+    log.write('\n-------------------------------------------\n\n')
+    write_stats_summary(log, df_gral_tot,      "storage")
+    write_stats_summary(log, df_gral_inf_tot,  "inflow")
+    write_stats_summary(log, df_gral_outf_tot, "outflow")
 
 
 #===============================================================================
@@ -426,7 +453,7 @@ for region in regions:
         df_out = pd.read_csv(f'{stat_dir}/{region}/{monOutflowCsvFn.format(region=region)}',index_col=0)
         df_list_out.append(df_out)
     except:
-        continuec
+        continue
 
     
 df_inflow_perf  = pd.concat(df_list)

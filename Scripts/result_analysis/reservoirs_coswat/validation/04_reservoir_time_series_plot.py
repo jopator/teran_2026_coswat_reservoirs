@@ -16,8 +16,11 @@ import matplotlib.colors as mcolors
 from scipy.stats import pearsonr
 import pickle as pkl
 from matplotlib.lines import Line2D
+from pathlib import Path
 
-os.chdir('/media/jopato/jopato_ssd/PHD/PHD_main/Projects/CoSWAT/Paper_Ch2/codeAndDataAvailability/teran_et_al_2026_coswat_reservoirs')#'/data/brussel/vo/000/bvo00033') # All relative paths will be based on this ! !
+BASE_DIR = Path(__file__).resolve().parents[4]  # root of repo
+os.chdir(BASE_DIR)  # All relative paths will be based on this ! !
+
 
 # Paths settings and file names
 # ====================
@@ -51,11 +54,6 @@ regions = [
            'europe-west'
            ]
 
-# def month_climatology(df,column):
-#     df = df.copy()
-#     df["month"] = df["date"].copy().dt.month
-#     return df.groupby("month")[column].agg(["mean", "min", "max"]).reset_index()
-
 def month_climatology(df, column):
     df = df.copy()
     df["month"] = df["date"].dt.month
@@ -69,7 +67,7 @@ def month_climatology(df, column):
     return out[["month", "mean", "min", "max"]]
 
 # Read observations dictionary
-obs_fn = f'{analysis_folder}/reservoirs_coswat/observations/Reservoir_storage_global_data/processed/data/globalReservoirDataAggregated.pkl'
+obs_fn = f'Scripts/res_obs_preprocessing/Reservoir_storage_global_data/processed/data/globalReservoirDataAggregated.pkl'
 
 with open(obs_fn,'rb') as f:
     obs_dict = pkl.load(f)

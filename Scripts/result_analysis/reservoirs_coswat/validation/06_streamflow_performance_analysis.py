@@ -11,9 +11,7 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
-import seaborn as sns
 import matplotlib.colors as mcolors
-from scipy.stats import pearsonr
 import hydroeval as he
 import matplotlib.gridspec as gridspec
 import matplotlib.patches as mpatches
@@ -23,7 +21,7 @@ import matplotlib.cm as cm
 from matplotlib.patches import Rectangle
 import pickle as pkl
 import sys
-
+from pathlib import Path
 
 # Function
 def summary_row(series):
@@ -50,9 +48,8 @@ def lat_formatter(y, pos):
 
 # Paths settings and file names
 # ====================
-
-os.chdir('/media/jopato/jopato_ssd/PHD/PHD_main/Projects/CoSWAT/Paper_Ch2/codeAndDataAvailability/teran_et_al_2026_coswat_reservoirs')#'/data/brussel/vo/000/bvo00033') # All relative paths will be based on this ! !
-
+BASE_DIR = Path(__file__).resolve().parents[4]  # root of repo
+os.chdir(BASE_DIR)  # All relative paths will be based on this ! !
 
 versionRes         = "1.5.0"
 versionNores       = "1.1.0"

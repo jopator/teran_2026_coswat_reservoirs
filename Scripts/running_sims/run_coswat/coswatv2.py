@@ -1,7 +1,6 @@
 """
 Script for running swat
 To set it up ---> Go to setup.py
-To submit as job to hpc ---> Go to submitHPC.py
 
 Jose P. Teran - Nov 2025
 """

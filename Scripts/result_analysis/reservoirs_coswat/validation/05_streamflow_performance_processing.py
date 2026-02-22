@@ -14,9 +14,10 @@ import sys
 import numpy as np
 import pandas as pd
 import geopandas as gpd
+from pathlib import Path
 
-
-os.chdir('/media/jopato/jopato_ssd/PHD/PHD_main/Projects/CoSWAT/Paper_Ch2/codeAndDataAvailability/teran_et_al_2026_coswat_reservoirs')#'/data/brussel/vo/000/bvo00033') # All relative paths will be based on this ! !
+BASE_DIR = Path(__file__).resolve().parents[4]  # root of repo
+os.chdir(BASE_DIR)  # All relative paths will be based on this ! !
 
 
 # Paths settings and file names

@@ -5,20 +5,24 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 import pickle as pkl
 import os
+from pathlib import Path
 
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+BASE_DIR = Path(__file__).resolve().parents[2]  # root of repo
+os.chdir(BASE_DIR)
 
 # Directories, names, variables
-raw_data_dir    = 'Reservoir_storage_global_data/raw'
+raw_data_dir    = 'Scripts/res_obs_preprocessing/Reservoir_storage_global_data/raw'
 grs_data_dir    = 'GRS/data'
 resops_data_dir = 'ResOpsUs/data'
 yasin_data_dir  = 'yasin/data'
-export_folder   = 'Reservoir_storage_global_data/processed/data'
-
-grand_fn        = 'hydro-lakes/GRanD_Version_1_3/GRanD_dams_v1_3.shp'# GranD - Path
+export_folder   = 'Scripts/res_obs_preprocessing/Reservoir_storage_global_data/processed/data'
+grand_fn        = 'CoSWAT-Framework/data-preparation/resources/hydro-lakes/GRanD_Version_1_3/GRanD_reservoirs_v1_3.shp'
 global_data_dict = {}
 
+os.makedirs(f'{export_folder}',exist_ok=True)
 
+print("> Starting preprocessing of reservoir storage - inflow - outflow data from GRS/ResOpsUS/Yassin2018")
 #=================================
 #GRS
 #=================================
@@ -152,6 +156,9 @@ for file in file_list:
     yasin_grand_ids.append(grand_id)
     global_data_dict[grand_id] = df_merged
 
+
+print("> Aggregating into single dictionary...")
+
 #=================================
 #Aggregate
 #=================================
@@ -213,7 +220,30 @@ for gid, d in global_data_dict_agg_filt.items():
 
 flags_df = pd.DataFrame(rows).sort_values('id').reset_index(drop=True)
 
+# Remove reservoirs too inconsistent in comparison to GranD storage values -> Using >50% relative error as the cutoff
+grand_gdf = gpd.read_file(grand_fn)
+
+ids_to_remove = []
+
+for grand_id, df in global_data_dict_agg_filt.items():
+
+    # long-term mean storage
+    storage_lta = df['storage_mean'].mean()
+
+    # capacity from grand_df
+    cap_cols = ['CAP_MCM']
+    cap_vals = grand_gdf.loc[grand_gdf['GRAND_ID'] == int(grand_id), cap_cols]
+    cap_ref = float(cap_vals.max(axis=1).values[0])*0.001
+    rel_err = abs(storage_lta - cap_ref) / cap_ref * 100
+
+    if rel_err > 60:
+        ids_to_remove.append(grand_id)
+
+
+for gid in ids_to_remove:
+    global_data_dict_agg_filt.pop(gid, None)
 
 # export data
+print(f"> Exporting to {export_folder}")
 with open(f'{export_folder}/globalReservoirDataAggregated.pkl','wb') as f:
     pkl.dump(global_data_dict_agg_filt, f)
