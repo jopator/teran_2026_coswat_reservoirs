@@ -11,3 +11,5 @@ Scripts/result_analysis/reservoirs_coswat/validation/isimipModels/plots/
 Scripts/result_analysis/reservoirs_coswat/validation/isimipModels/processedData/
 Scripts/result_analysis/reservoirs_coswat/validation/isimipModels/modelOutputs/
 Scripts/result_analysis/reservoirs_coswat/validation/isimipModels/stats/
+Scripts/result_analysis/reservoirs_coswat/validation/plots
+Scripts/res_obs_preprocessing/Reservoir_storage_global_data/raw

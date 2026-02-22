@@ -143,27 +143,26 @@ if __name__ == '__main__':
         val_df['storage_min']  = pd.to_numeric(val_df['storage_min'],  errors='coerce')
         val_df['storage_max']  = pd.to_numeric(val_df['storage_max'],  errors='coerce')
         
-        # Filter out observations that have a relative error > 50 % comparing long term storage to hydrolakes/granD storage
-        lta_storage_obs   = val_df['storage_mean'].mean()
-        lta_storage_hylak = float(res_gdf.loc[res_gdf['Hylak_id'] == hylak_id, 'smax'].iloc[0])/1000000000
+        # Filter out observations that have a relative error > 50 % omparing long term storage to hydrolakes/granD storage [ResOpsUS and GRS tend to have large shifts some times]
+        lta_storage_obs       = val_df['storage_mean'].mean()
+        lta_storage_obs_min   = val_df['storage_min'].mean()
+        lta_storage_obs_max   = val_df['storage_max'].mean()
+
+        lta_storage_hylak = float(res_gdf.loc[res_gdf['Hylak_id'] == hylak_id, 'smax'].iloc[0])/1e9
         
         rel_err = 100 * abs(lta_storage_hylak-lta_storage_obs)/lta_storage_hylak
         
         if abs(rel_err) > 60:
             continue
-        
-        #Skip lake victoria
-        if hylak_id == 16:
-            continue
-        
+
         # Calculate stats
         try:
             kge_s, pbias_s, r_s, alpha_s, beta_s = calcSats(val_df,"flo_stor_km3","storage_mean")
         except:
             continue
         
-        if kge_s < -5.0 or pbias_s < -200 or pbias_s > 200: #Likely an error here, plots show an unreal difference between sim and obs
-            continue
+        if kge_s<-5 or pbias_s < -200 or pbias_s > 200:  #Likely an error here, plots show an unreal difference
+                continue
         
         kge_s_lst.append(kge_s) 
         pbias_s_lst.append(pbias_s) 
@@ -174,6 +173,9 @@ if __name__ == '__main__':
         
         if not val_df['inflow_mean'].isna().all():
             kge_i, pbias_i, r_i, alpha_i, beta_i = calcSats(val_df,"flo_in_m3s","inflow_mean")
+
+            if kge_i<-5:  #Likely an error here, plots show an unreal difference
+                continue
             kge_i_lst.append(kge_i) 
             pbias_i_lst.append(pbias_i) 
             r_i_lst.append(r_i) 
@@ -183,6 +185,8 @@ if __name__ == '__main__':
         
         if not val_df['outflow_mean'].isna().all():   
             kge_o, pbias_o, r_o, alpha_o, beta_o = calcSats(val_df,"flo_out_m3s","outflow_mean")
+            if kge_o<-5:  #Likely an error here, plots show an unreal difference
+                continue
             kge_o_lst.append(kge_o) 
             pbias_o_lst.append(pbias_o) 
             r_o_lst.append(r_o) 

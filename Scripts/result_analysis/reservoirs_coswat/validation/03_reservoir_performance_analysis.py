@@ -52,17 +52,17 @@ def write_stats_summary(log, df, label):
     num_pbias_ok   = int((df["pbias"].abs() <= 50).sum())
     num_pbias_good = int((df["pbias"].abs() <= 25).sum())
 
-    kge_min, kge_max, kge_avg, kge_std = df["kge"].min(), df["kge"].max(), df["kge"].mean(), df["kge"].std()
-    r_min,   r_max,   r_avg,   r_std   = df["R"].min(),   df["R"].max(),   df["R"].mean(),   df["R"].std()
-    pb_min,  pb_max,  pb_avg,  pb_std  = df["pbias"].min(), df["pbias"].max(), df["pbias"].mean(), df["pbias"].std()
+    kge_min, kge_max, kge_avg, kge_std = df["kge"].min(), df["kge"].max(), df["kge"].median(), df["kge"].std()
+    r_min,   r_max,   r_avg,   r_std   = df["R"].min(),   df["R"].max(),   df["R"].median(),   df["R"].std()
+    pb_min,  pb_max,  pb_avg,  pb_std  = df["pbias"].min(), df["pbias"].max(), df["pbias"].median(), df["pbias"].std()
 
     log.write(f"=== Summary of stats for monthly reservoir {label} ====\n")
     log.write(f"A total of {num_res} were evaluated\n\n")
 
     log.write("=== Overall statistics ===\n")
-    log.write(f"KGE   -> min: {kge_min:.2f}, max: {kge_max:.2f}, mean: {kge_avg:.2f}, std: {kge_std:.2f}\n")
-    log.write(f"R     -> min: {r_min:.2f},   max: {r_max:.2f},   mean: {r_avg:.2f},   std: {r_std:.2f}\n")
-    log.write(f"PBIAS -> min: {pb_min:.2f}%, max: {pb_max:.2f}%, mean: {pb_avg:.2f}%, std: {pb_std:.2f}%\n\n")
+    log.write(f"KGE   -> min: {kge_min:.2f}, max: {kge_max:.2f}, median: {kge_avg:.2f}, std: {kge_std:.2f}\n")
+    log.write(f"R     -> min: {r_min:.2f},   max: {r_max:.2f},   median: {r_avg:.2f},   std: {r_std:.2f}\n")
+    log.write(f"PBIAS -> min: {pb_min:.2f}%, max: {pb_max:.2f}%, median: {pb_avg:.2f}%, std: {pb_std:.2f}%\n\n")
 
     log.write("=== Performance threshold distribution ===\n")
 
@@ -84,8 +84,7 @@ def write_stats_summary(log, df, label):
     log.write(f"|PBIAS| ≤ 50 : {num_pbias_ok} ({p_pbias_ok:.1f}%)\n")
     log.write(f"|PBIAS| ≤ 25 : {num_pbias_good} ({p_pbias_good:.1f}%)\n\n")
 
-
-
+    
 # Paths settigs and file names
 # =======================================================================================================
 version         = "1.5.0"
@@ -172,19 +171,12 @@ df_gral_inf = df_gral_inf.reset_index(drop=True)
 df_gral_outf = pd.concat(df_outf_list)
 df_gral_outf = df_gral_outf.reset_index(drop=True)
 
-df_gral      = df_gral[df_gral['kge']>-5]
-df_gral_inf  = df_gral_inf[df_gral_inf['kge']>-5]
-df_gral_outf = df_gral_outf[df_gral_outf['kge']>-5]
-
 df_long = df_gral.melt(id_vars="grand_id", value_vars=["kge", "R", "pbias","alpha","beta"], var_name="metric",value_name="value")
 df_long_inf = df_gral_inf.melt(id_vars="grand_id",value_vars=["kge", "R", "pbias","alpha","beta"],var_name="metric",value_name="value")
 df_long_outf = df_gral_outf.melt(id_vars="grand_id",value_vars=["kge", "R", "pbias","alpha","beta"],var_name="metric",value_name="value")
- 
-
 
 # Distribution
 stats = ["kge", "pbias", "R"]
-
 data_sets = [("Storage", df_long),("Inflow", df_long_inf),("Outflow", df_long_outf),]
 
 fig, axs = plt.subplots(3, 3, figsize=(20, 10),sharey=True)
@@ -203,20 +195,20 @@ for i, (label, df_sel) in enumerate(data_sets):
         else:
             sns.histplot(data=df_sel[df_sel["metric"] == stat],x="value",kde=True,stat="percent",color=colors[stat],ax=ax)
             
-            ax.set_ylim(0,25)
+            # ax.set_ylim(0,25)
 
         if stat == 'kge':
             if label == 'Storage':
                 ax.set_xlim(-2,0.8)
             else:
-                ax.set_xlim(-2,0.8)
+                ax.set_xlim(-2,1.0)
 
             ax.axvline(-0.41, color="k", linestyle=":", linewidth=1.5,label="Minimum")
             ax.axvline(0.0, color="k", linestyle="--", linewidth=2,label="Satisfactory")
             ax.axvline(0.3, color="k", linestyle="dashdot", linewidth=1,label="Good")
 
         if stat == 'R':
-            ax.set_xlim(-0.75,1)
+            # ax.set_xlim(-0.75,1)
             ax.axvline(0.0, color="k", linestyle="--", linewidth=2,label="Satisfactory")
             ax.axvline(0.4, color="k", linestyle="dashdot", linewidth=1,label="Good")
             ax.set_xlabel("r")
@@ -420,10 +412,25 @@ plt.tight_layout()
 plt.savefig(f'{stat_plots_dir}/scatter_1.jpg',bbox_inches="tight")
 plt.close()
 
-# Copies of existing thingies
-storage_eval_gdf    = gdf_eval.copy()    
-df_inflow_perf      = df_gral_outf.copy()
-df_outflow_perf     = df_gral_inf.copy()
+# Simulation results
+storage_eval_gdf    = gdf_eval.copy()
+
+df_list = []
+df_list_out = []
+
+for region in regions:
+    try:
+        df = pd.read_csv(f'{stat_dir}/{region}/{monInflowCsvFn.format(region=region)}',index_col=0)
+        df_list.append(df)
+        
+        df_out = pd.read_csv(f'{stat_dir}/{region}/{monOutflowCsvFn.format(region=region)}',index_col=0)
+        df_list_out.append(df_out)
+    except:
+        continuec
+
+    
+df_inflow_perf  = pd.concat(df_list)
+df_outflow_perf = pd.concat(df_list_out)
 
 # Create unique dataframe to compare
 storage_inflow_eval_gdf = storage_eval_gdf[storage_eval_gdf['grand_id'].isin(df_inflow_perf['grand_id'].to_list())]

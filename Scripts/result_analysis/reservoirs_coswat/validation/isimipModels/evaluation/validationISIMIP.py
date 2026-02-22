@@ -100,7 +100,7 @@ for region in regions:
         obs_df = obsRegion_dict[grand_id].copy()
         obs_df["date"] = pd.to_datetime(obs_df["date"])
         swat_df = swatMon_dict[grand_dict[grand_id]]['coswatOut']
-        swat_df['flo_stor_km3']  = swat_df['flo_stor']/1000000000
+        swat_df['flo_stor_km3']  = swat_df['flo_stor']/1e9
 
         xmin = max(obs_df["date"].min(), pd.Timestamp("1970-01-01"))
         xmax = min(obs_df["date"].max(), pd.Timestamp("2016-01-01"))

@@ -100,7 +100,7 @@ colors = {
 # - If skill is increasing, and the station was bad         (kgeNoRes<-0.41)   qSkill_category  = 2
 # - If skill is increasing, and the station was ok          (kgeNoRes>-0.41)   qSkill_category  = 1
 #======================================================================================================
-change_threshold = 0.0758       # Change threshold for KGE skill score
+change_threshold = 0.075       # Change threshold for KGE skill score
 
 
 
